@@ -1,0 +1,74 @@
+Kleidungsstück {
+	bool wasserfest;
+	kategorie;
+	int minTemp;
+	int maxTemp;
+	int minUVIndex; //für sonnencremes
+	int maxUVIndex; //für sonnencremes
+	int cloudCoverThreshold; //für sonnenbrillen 0-100%. Oberhalb von dieser Bewölkung werden sie empfohlen.
+	Tags["Sport", "Impacted by rain"...]; //Impacted by rain -> Wasserfestigkeit wird berücksichtigt
+}
+
+kategorie {
+	Socken
+	Hosen
+	T-Shirts
+	Pullover
+	Jacken
+	Schuhe
+	Kopfbedeckungen (Hauben, Kappen, etc.)
+	Strumpfhosen
+	Handausstattung (z.B. Fächer, Handschuhe, etc...)
+	Sonnebrillen
+	Sonnencreme (UPF 10 30 50 etc.)
+}
+
+Config {
+   	rainThreshold = 0.5;
+    minComfortHours = 7;
+    sunglassesMinHours = 3;
+}
+
+bool isRecommended(Kleidungsstück, currentTime, apparent_temperature[], rain[], cloud_cover[], uv_index[], is_day[]) {
+	if(Kleidungsstück.ImpactedByRain) {
+		if (rain from [currentTime] to [currentTime+10] contains > Config.rainThreshold) //Bei vorkommen von mehr als 0.5mm regen in den nächsten 10h wasserfeste Kleidung empfehlen
+		{
+			if (Kleidungsstück.wasserfest == true)
+			{
+				return checkTemperatureRange(Kleidungsstück, currentTime, apparent_temperature[]);
+			}
+		} else {
+			return checkTemperatureRange(Kleidungsstück, currentTime, apparent_temperature[]);
+		}
+	} else if(Kleidungsstück == Sonnebrillen) {
+		int exceedsCloudCoverTreshold = 0;
+		for (int i = currentTime; i <= currentTime+10; ++i)
+		{
+			if(is_day[i] == 1 && Kleidungsstück.cloudCoverThreshold < cloud_cover[i]) exceedsCloudCoverTreshold++; //berechnen wie oft die sonne scheint und wenig wolken am himmel sind
+		}
+		if (exceedsCloudCoverTreshold > Config.sunglassesMinHours) return true;
+	} else if(Kleidungsstück == Sonnencreme) {
+		int peakUV = Peak-UV-Werte des aktuellen Tages ab der aktuellen Uhrzeit;
+
+		if (Kleidungsstück.minUVIndex <= peakUV && Kleidungsstück.maxUVIndex >= peakUV) return true;
+	} else {
+		return checkTemperatureRange(Kleidungsstück, currentTime, apparent_temperature[]);
+	}
+
+	return false;
+}
+
+//Wenn Kleidungsstück mind. 70% der Zeit von der Temperatur passt -> empfehlen.
+bool checkTemperatureRange(Kleidungsstück, currentTime, apparent_temperature[]) {  //Berechnet wie oft in den nächsten 10 Stunden das Kleidungsstück in der Temperaturrange optimal ist 0-10
+	int fallsInRange = 0;
+	for (int i = currentTime; i <= currentTime+10; ++i)
+	{
+		if (Kleidungsstück.minTemp <= apparent_temperature[i] && Kleidungsstück.maxTemp >= apparent_temperature[i])
+		{
+			fallsInRange++;
+		}
+	}
+
+	if (fallsInRange >= Config.minComfortHours) return true;
+	return false;
+}
