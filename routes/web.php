@@ -15,3 +15,12 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+use Illuminate\Http\Request;
+
+Route::post('/save-outfit', function (Request $request) {
+    return response()->json([
+        'message' => 'Outfit-IDs empfangen!',
+        'daten' => $request->all()
+    ]);
+})->name('outfit.save');
