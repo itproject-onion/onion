@@ -15,3 +15,7 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+Route::resource('items', ItemController::class);
+Route::resource('categories', CategoryController::class);
+Route::resource('tags', TagController::class);
