@@ -1,0 +1,45 @@
+ITEM
+	itemid int primary-key
+	waterproof bool(yes/no/null)
+	itemname string not-null
+	image string(filepath) not-null
+	item.categoryid (int/null) foreign-key on-delete-set-null
+	item.userid (int/null) foreign-key on-delete-cascade
+	creationdate date current-date not-null
+
+USER
+	userid int primary-key
+	password string
+	username string
+	email string unique
+	usertempoffset int(default 0) not-null
+
+CATEGORY
+	categoryid int primary-key
+	categoryname string not-null unique
+	impactedbyrain bool not-null
+	cloudcoverthreshold int(0-100/null)
+	maxuv int(/null)
+	minuv int(/null)
+	maxtemp int(/null)
+	mintemp int(/null)
+
+TAG
+	tagid int primary key
+	tag.userid (int/null) foreign key on-delete cascade
+	tagname string not-null
+
+
+
+CATEGORY_OFFSETS (USERxCATEGORY)
+	(userid, categoryid -> primarykey)
+	catoffsets.userid int foreign-key on-delete-cascade
+	catoffsets.categoryid int foreign-key on-delete-cascade
+	mintempoffset int(default 0) not-null
+	maxtempoffset int(default 0) not-null
+
+USERITEMTAGS (USERxITEMxTAG)
+	(tagid, itemid, userid -> primary key)
+	itemtags.tagid int foreign key on-delete-cascade
+	itemtags.itemid int foreign key on-delete-cascade
+	itemtags.userid int foreign-key on-delete-cascade

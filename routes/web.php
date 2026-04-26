@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\onion;
+
+Route::get('/onion', [RecommendationController::class, 'index']);
 
 Route::get('/', function () {
     return view('welcome');
