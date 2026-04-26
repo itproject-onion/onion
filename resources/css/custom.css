@@ -1,0 +1,292 @@
+body {
+    font-family: 'Figtree', sans-serif;
+    background-color: #E3C4A8;
+    margin: 0;
+    color: #444;
+    overflow-x: hidden;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; 
+    gap: 40px;
+    min-height: 100vh;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.side-area {
+    position: sticky;
+    top: 60px;
+    height: fit-content;
+}
+
+.side-area.branding {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;   
+}
+
+.side-area.info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Inhalt am linken Rand der rechten Spalte */
+    text-align: left;        /* Text linksbündig zur Pille hin */
+}
+
+.main-configurator {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 600px;
+}
+
+.onion-title { /*"on¿on'*/
+    font-size: 6rem; 
+    font-weight: 800; 
+    margin: 0; 
+    line-height: 0.8; 
+}
+
+.onion-subtitle { /*was ziehst du heute an*/
+    font-size: 2.2rem; 
+    font-weight: 300; 
+    margin-top: 20px; 
+    line-height: 1.1; 
+}
+
+
+.outfit-capsule { /* die weißen pillen :)*/
+    background-color: #ffffff;
+    border-radius: 100px;
+    width: 600px; 
+    height: 180px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    padding: 0 40px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+    overflow: visible; 
+}
+
+/*css für teile des outfits mit mehreren schichten - für 2 schichten muss ich das css noch schrieben...*/
+.layer-selection-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.layer-square {
+    width: 160px;
+    height: 100%;
+    margin: 0 -50px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.layer-square[data-layer="upper_shirt"] { z-index: 1; }
+.layer-square[data-layer="upper_pulli"] { z-index: 2; }
+.layer-square[data-layer="upper_jacke"] { z-index: 3; }
+
+.layer-selection-grid:hover .layer-square { margin: 0 -10px; }
+.layer-square:hover { transform: scale(1.15); z-index: 10 !important; }
+
+.square-content { /*felder der items ->"buttons" :) */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.square-image { /*die bilder in den feldern selbst...*/
+    max-height: 85%;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.25));
+}
+
+
+.layer-carousel-view {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    padding: 0 40px;
+    box-sizing: border-box;
+    z-index: 5;
+}
+
+.view-window {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    flex-grow: 1;
+    height: 100%;
+}
+
+.item-main { width: 160px;
+    height: 160px; 
+    object-fit: 
+    contain; 
+}
+.item-side { 
+    width: 80px; 
+    height: 80px; 
+    opacity: 0.3; 
+    object-fit: contain; 
+}
+
+.shadow-aura {
+    filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.3)) !important;
+}
+
+.nav-arrow {
+    background: none; border: none; font-size: 3rem; cursor: pointer; color: #333;
+    padding: 0; margin: 0;
+    transition: transform 0.2s;
+}
+.nav-arrow:hover { 
+    transform: scale(1.2); 
+}
+
+
+.main-item-wrapper { 
+    position: relative; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; }
+
+.select-trigger-overlay { /*der haken :)*/
+    position: absolute; 
+    top: 0; left: 0;
+     width: 100%; 
+    height: 100%; z-index: 10;
+}
+
+.main-item-wrapper:hover::after {
+    content: '\F272';
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 3rem; color: rgba(255,255,255,0.7); pointer-events: none;
+    z-index: 15;
+}
+
+/*wetter bereich :)*/
+.display-temp { 
+    font-size: 5rem; 
+    font-weight: 800; 
+    margin: 0; }
+.weather-icons { 
+    position: relative; 
+    font-size: 4rem; 
+    color: #FFD700; 
+    margin-top: 20px; }
+.overlap-cloud { 
+    position: absolute; 
+    right: -10px; 
+    bottom: -10px; 
+    color: #BDC3C7; 
+    font-size: 2.5rem; }
+
+.recommendation-box { 
+    margin-top: 20px; 
+    max-width: 250px; 
+}
+
+
+/* anziehen knopf...*/
+.anziehen-btn {
+    background-color: #D2A679; color: white; border: none;
+    padding: 15px 40px; border-radius: 40px; font-weight: 800;
+    font-size: 1.5rem; cursor: pointer; transition: all 0.2s;
+}
+.anziehen-btn:hover { 
+    background-color: #c49668; 
+    transform: scale(1.05); }
+
+.pc-only { 
+    margin-top: 30px; 
+}
+
+/* responsiveness... 
+leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
+@media (max-width: 1200px) {
+    .wrapper {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr; 
+        padding: 20px;
+        gap: 20px;
+    }
+
+    /* Logo oben links statt seitlich */
+    .side-area.branding {
+        grid-column: 1;
+        grid-row: 1;
+        position: static;
+        align-items: flex-start;
+        text-align: left;
+        padding-bottom: 0;
+    }
+
+    /* Wetter oben rechts statt seizlich */
+    .side-area.info {
+        grid-column: 2;
+        grid-row: 1;
+        position: static;
+        display: flex !important;
+        align-items: flex-end;
+        text-align: right;
+        padding-bottom: 0;
+    } 
+
+    .main-configurator {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        width: 100%;
+        min-width: unset;
+        margin-top: 20px;
+    }
+
+    .outfit-category-capsule {
+        width: 100%;
+        height: 140px;
+        margin-bottom: 15px;
+    }
+
+    .onion-title { font-size: 3.5rem; }
+    .onion-subtitle { font-size: 1.2rem; }
+    .display-temp { font-size: 3rem; }
+    .pc-only { display: none !important; }
+}
+
+@media (max-width: 768px) {
+    /* Mobile-Only Button am Ende der Seite (und nicht unter dem onion logo...)*/
+    .mobile-only { 
+        display: block; 
+        width: 100%; 
+        margin: 20px 0 40px 0; 
+    }
+}
+
+@media (max-width: 500px) {
+    .onion-subtitle, .weather-icons, .zip { display: none; }
+}
+
+.d-none { display: none !important; }
