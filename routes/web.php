@@ -2,12 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\onion;
+use App\Http\Controllers\RecommendationController;
 
 Route::get('/onion', [RecommendationController::class, 'index']);
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [RecommendationController::class, 'index']);
 
 Route::middleware([
     'auth:sanctum',

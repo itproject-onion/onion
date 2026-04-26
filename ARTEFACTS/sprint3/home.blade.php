@@ -1,4 +1,5 @@
-//items
+//ALTE LOGIK FÜR DIVS ERSTELLEN
+//items JETZT ÜBERFLÜSSIG
 <div class="grid">
     @foreach($recommendations as $item)
         @if($item['kategorie'] === 'sonnenbrille')

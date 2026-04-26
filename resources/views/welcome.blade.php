@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js', 'resources/js/custom.js'])
+    <script>
+        const wardrobe_inventory = @json($recommendations);
+    </script>
 </head>
 
 <body>
@@ -25,11 +28,6 @@
     <section class="main-configurator">
         <form action="{{ route('outfit.save') }}" method="POST" id="outfit-form">
             @csrf
-            @php 
-        
-        //könnte man theoretsich auch dynamisch übergeben...
-                $categories = ['head', 'upper', 'lower', 'feet']; 
-            @endphp
 
             @foreach($categories as $cat)
                 <div class="outfit-capsule" data-category="{{ $cat }}">
@@ -95,19 +93,29 @@
     <!--wetter blcok ist grad einfach nur platzhalter den müsstet ihr bitte noch dynamsich befüllen (je nach dem wie du die sachen in der db dann final benennst...-->
     <aside class="side-area info">
         <div class="weather-desktop">
-            <div class="weather-city"><i class="bi bi-geo-alt-fill"></i> WIEN</div>
-            <p class="zip">1130 WIEN</p>
-            <h2 class="display-temp">15°</h2>
-            <p class="condition">windig</p>
+            <div class="weather-city"><i class="bi bi-geo-alt-fill"></i>{{ $location }}</div>
+            <h2 class="display-temp">{{ $weather['apparentTemperature'][$current_time] }}</h2>
+            <p class="condition">windig ANPASSEN</p>
             <div class="weather-icons">
-                <i class="bi bi-sun-fill main-sun"></i>
-                <i class="bi bi-cloud-fill overlap-cloud"></i>
+                <i class="bi bi-sun-fill main-sun">ANPASSEN</i>
+                <i class="bi bi-cloud-fill overlap-cloud">ANPASSEN</i>
             </div>
             <div class="recommendation-box">
                 <p>hier ist theoretisch noch platz für einen kleinen infotext zum wetter oder so idk</p>
             </div>
         </div>
     </aside>
+
+    //tags ZUM TESTEN
+    <div class="grid" id="tags">
+        @foreach($tags as $index => $tag)
+            <div>
+                <input type="checkbox" id="tag-{{ $index }}" value="{{ $tag }}"/>
+                <label for="tag-{{ $index }}">{{ $tag }}</label>
+            </div>
+        @endforeach
+    </div>
+
 </main>
 
 </body>
