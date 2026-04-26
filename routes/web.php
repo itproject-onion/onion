@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\onion;
 use App\Http\Controllers\RecommendationController;
 
@@ -18,7 +19,9 @@ Route::middleware([
     })->name('dashboard');
 });
 
-use Illuminate\Http\Request;
+Route::resource('items', ItemController::class);
+Route::resource('categories', CategoryController::class);
+Route::resource('tags', TagController::class);
 
 Route::post('/save-outfit', function (Request $request) {
     return response()->json([
