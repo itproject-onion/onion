@@ -29,3 +29,11 @@ Route::post('/save-outfit', function (Request $request) {
         'daten' => $request->all()
     ]);
 })->name('outfit.save');
+
+Route::get('/profile', function () {
+    return view('profile');
+})->name('profile');
+
+Route::get('/settings', function () {
+    return view('settings');
+})->middleware(['auth'])->name('settings');
