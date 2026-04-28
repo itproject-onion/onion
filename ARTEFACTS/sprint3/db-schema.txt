@@ -38,8 +38,7 @@ CATEGORY_OFFSETS (USERxCATEGORY)
 	mintempoffset int(default 0) not-null
 	maxtempoffset int(default 0) not-null
 
-USERITEMTAGS (USERxITEMxTAG)
-	(tagid, itemid, userid -> primary key)
+ITEMTAGS (ITEMxTAG) (Kein Tagging von default-items. Bei insert oder delete prüfen ob der Eigentümer des zugehörigen Items (item.userid) auch der eingeloggte user ist -> auth)
+	(tagid, itemid -> primary key)
 	itemtags.tagid int foreign key on-delete-cascade
 	itemtags.itemid int foreign key on-delete-cascade
-	itemtags.userid int foreign-key on-delete-cascade
