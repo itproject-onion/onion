@@ -8,9 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js', 'resources/js/custom.js'])
+    @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js'])
     <script>
-        const wardrobe_inventory = @json($recommendations);
+        window.wardrobe_inventory = @json($recommendations);
     </script>
 </head>
 
