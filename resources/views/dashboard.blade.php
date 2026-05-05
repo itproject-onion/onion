@@ -13,3 +13,11 @@
         </div>
     </div>
 </x-app-layout>
+
+<form method="POST" action="{{ route('logout') }}" class="d-inline">
+    @csrf
+    <button type="submit" class="btn-primary">
+        Abmelden
+    </button>
+    </form>
+

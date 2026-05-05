@@ -22,7 +22,17 @@
             <h1 class="onion-title">on¿on</h1>
             <p class="onion-subtitle">Was ziehst du<br>heute an?</p>
             <button type="submit" form="outfit-form" class="anziehen-btn pc-only">DAS HIER!</button>
-            
+        @guest
+   
+    <div class="auth-buttons mt-4">
+        <a href="{{ route('login') }}" class="btn btn-primary me-2">
+            Anmelden
+        </a>
+        <a href="{{ route('register') }}" class="btn btn-success">
+            Registrieren
+        </a>
+    </div>
+        @endguest
             
         </div>
     </aside>
