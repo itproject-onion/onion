@@ -290,3 +290,30 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
 }
 
 .d-none { display: none !important; }
+
+
+/* Styling für alle Modal-Buttons */
+.btn-primary,
+.btn-success {
+    background-color: #D2A679 !important; 
+    border: none !important;
+    border-radius: 50px !important; 
+    padding: 8px 20px !important;
+    color: white !important;
+    font-weight: bold !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Hover-Effekt für die Buttons */
+.btn-primary:hover,
+.btn-success:hover {
+    background-color: #c49668 !important; 
+    color: white !important;
+}
+
+
+.badge.bg-primary {
+    background-color:  #D2A679 !important; 
+    color: #333 !important; 
+}
+

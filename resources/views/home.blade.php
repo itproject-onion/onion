@@ -14,7 +14,7 @@
     </script>
 </head>
 
-<body>
+<body data-tags="{{ json_encode($tags) }}">
 
 <main class="wrapper">
     <aside class="side-area branding">
@@ -22,6 +22,8 @@
             <h1 class="onion-title">on¿on</h1>
             <p class="onion-subtitle">Was ziehst du<br>heute an?</p>
             <button type="submit" form="outfit-form" class="anziehen-btn pc-only">DAS HIER!</button>
+            
+            
         </div>
     </aside>
 
@@ -117,6 +119,16 @@
     </div>
 
 </main>
+<div class="mt-2">
+  @include('modals.add-tag')
+</div>
 
+<div class="mt-3">
+  @include('modals.upload-clothing')
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+@vite(['resources/js/modal.js'])
 </body>
 </html>
