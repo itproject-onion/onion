@@ -10,6 +10,13 @@ class Item extends Model
         'name',
         'filepath',
         'is_waterproof',
+        'min_temperature',
+        'max_temperature',
+        'min_uv_index',
+        'max_uv_index',
+        'cloud_cover_threshold',
+        'min_temperature_offset',
+        'max_temperature_offset',
 
         'category_id',
         'user_id',
@@ -29,5 +36,10 @@ class Item extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function selectedOutfits()
+    {
+        return $this->hasMany(SelectedOutfit::class);
     }
 }
