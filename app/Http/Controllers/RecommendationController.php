@@ -5,6 +5,7 @@ use App\Services\WeatherService;
 use App\Services\RecommendationService;
 use App\Services\GeocodingService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Category;
 use App\Models\Tag;
@@ -81,6 +82,32 @@ class RecommendationController extends Controller
                 $recommendations[] = $item;
             }
         }
+        $recommendationsForFrontend = $this->fromatForFrontend($recommendations);
+        /* Sollte sowas liefern
+        {
+            "upper_jacke": [
+                {
+                "id": 10,
+                "img": "/storage/jacke1.png",
+                "name": "Supa Jacke",
+                "waterproof": true,
+
+                "tags": [
+                    { "id": 3, "name": "rain" },
+                    { "id": 5, "name": "wind" }
+                ],
+
+                "cloudcoverthreshold": 60,
+                "maxuv": null,
+                "minuv": null,
+                "maxtemp": 18,
+                "mintemp": 5,
+
+                "creationdate": "2026-05-05"
+                }
+            ]
+        }
+        */
         $categories = Category::all();
 
 
@@ -214,7 +241,7 @@ class RecommendationController extends Controller
         ];
 
         return view('home', [
-            'recommendations' => $recommendations,
+            'recommendations' => /*$recommendationsForFrontend NACH DEN TESTS AUF DAS ÄNDERN*/$recommendations,
             'tags' => $tags,
             'categories' => $categories,
             'weather' => $weather,
@@ -235,4 +262,71 @@ class RecommendationController extends Controller
 
         return -1;
     }
+
+    private function fromatForFrontend($recommendations) {
+        $categoryMap = [
+            'Kopfbedeckung'   => 'head',
+
+            'T-Shirt'         => 'upper_shirt',
+            'Pullover'        => 'upper_pulli',
+            'Jacke'           => 'upper_jacke',
+
+            'Hose'            => 'lower_pants',
+            'Strumpfhose'     => 'lower_tights',
+
+            'Socken'          => 'feet_socks',
+            'Schuhe'          => 'feet_shoes',
+
+            'Handausstattung' => 'hand',
+            'Sonnenbrille'    => 'sunglasses',
+            'Sonnencreme'     => 'sunscreen',
+        ];
+
+        $result = [
+            'head' => [],
+
+            'upper_shirt' => [],
+            'upper_pulli' => [],
+            'upper_jacke' => [],
+
+            'lower_pants' => [],
+            'lower_tights' => [],
+
+            'feet_socks' => [],
+            'feet_shoes' => [],
+
+            'hand' => [],
+            'sunglasses' => [],
+            'sunscreen' => [],
+        ];
+
+        foreach ($recommendations as $item) {
+            if (!$item->category) continue;
+
+            $key = $categoryMap[$item->category->categoryname] ?? null;
+            if (!$key) continue;
+
+            $result[$key][] = [
+                'id' => $item->id,
+                'img' => $item->filepath,
+                'name' => $item->itemname,
+                'waterproof' => $item->waterproof,
+                'cloudcoverthreshold' => $item->cloudcoverthreshold,
+                'maxuv' => $item->maxuv,
+                'minuv' => $item->minuv,
+                'maxtemp' => $item->maxtemp,
+                'mintemp' => $item->mintemp,
+                'creationdate' => $item->creationdate,
+                // TAGS (id + name)
+                'tags' => $item->tags->map(function ($tag) {
+                    return [
+                        'id' => $tag->id,
+                        'name' => $tag->name,
+                    ];
+                })->toArray(),
+            ];
+        }
+        return $result;
+    }
+
 }

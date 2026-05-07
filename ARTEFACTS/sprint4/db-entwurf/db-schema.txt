@@ -34,7 +34,7 @@ CATEGORY
 
 TAG
 	tagid int primary-key
-	tag.userid (int) foreign-key on-delete-cascade
+	tag.userid int(/null) foreign-key on-delete-cascade
 	tagname string not-null
 
 
@@ -45,22 +45,8 @@ ITEMTAGS (ITEMxTAG)
 	itemtags.tagid int foreign-key on-delete-cascade
 	itemtags.itemid int foreign-key on-delete-cascade
 
-SELECTED_OUTFIT
-/*
-	Idee: Speichern mit Timestamp und immer den neusten Timestamp verwenden, falls wir doch noch was mit alten Outfits machen wollen? Alternativ ausgewähltes Outfit in user-Tabelle speichern und nach Review immer löschen.
-	Problem bei dem Design: Schlechte Skalierbarkeit. Vertretbar bei unserem use-case? Entscheidung ob du noch was änderst bei dir Leonie. Bei Änderungen bitte nur Bescheid geben, damit ich das Modell anpassen kann.
-*/
-	selectedoutfitid int primary-key
+SELECTED_OUTFIT //Alle entries mit gleichem timestamp -> outfit.
+	(alle 3 spalten -> primary key/unique)
 	selectedoutfit.userid int not-null foreign-key on-delete-cascade
+	selectedoutfit.itemid int not-null foreign-key on-delete-cascade
 	creationdate date current-date not-null
-	Kopfbedeckung_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	T-Shirt_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Pullover_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Jacke_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Hose_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Strumpfhose_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Socken_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Schuhe_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Handausstattung_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Sonnenbrille_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
-	Sonnencreme_item_id (int/null->kein item ausgewählt) foreign-key on-delete-set-null
