@@ -1,0 +1,52 @@
+/*
+Kommentare:
+	Beim erstellen der Temperaturwerte für die Kategorien bin ich auf ein Problem gestoßen, darum wieder eine Änderung.
+	minuv, maxuv, mintemp, maxtemp, cloudcoverthreshold -> wieder zu item da sonst z.B. mehrere Sonnenbrillen und -cremes nicht möglich wären. Außerdem würden sonst in vielen Kategorien einfach immer alle Items empfohlen werden (z.B. Bei Schuhen könnte nicht je nach Temperatur zwischen Flipflops, Winterstiefeln etc. oder bei Jacken zwischen dünnen Jacken und Winterjacken unterschieden werden).
+*/
+
+
+
+ITEM
+	itemid int primary-key
+	waterproof bool(yes/no/null->Wasserfestigkeit nicht beachten)
+	itemname string not-null
+	image string(filepath) not-null
+	item.categoryid (int/null) foreign-key on-delete-set-null
+	item.userid (int/null) foreign-key on-delete-cascade
+	cloudcoverthreshold int(0-100/null)
+	maxuv int(/null)
+	minuv int(/null)
+	maxtemp int(/null)
+	mintemp int(/null)
+	creationdate date current-date not-null
+
+USER
+	userid int primary-key
+	password string
+	username string
+	email string unique
+	usertempoffset int(default 0) not-null
+
+CATEGORY
+	categoryid int primary-key
+	categoryname string not-null unique
+	impactedbyrain bool not-null
+
+TAG
+	tagid int primary-key
+	tag.userid int(/null) foreign-key on-delete-cascade
+	tagname string not-null
+
+
+
+ITEMTAGS (ITEMxTAG)
+//Kein Tagging von default-items. Bei insert oder delete prüfen ob der Eigentümer des zugehörigen Items (item.userid) auch der eingeloggte user ist -> auth
+	(tagid, itemid -> primary-key)
+	itemtags.tagid int foreign-key on-delete-cascade
+	itemtags.itemid int foreign-key on-delete-cascade
+
+SELECTED_OUTFIT //Alle entries mit gleichem timestamp -> outfit.
+	(alle 3 spalten -> primary key/unique)
+	selectedoutfit.userid int not-null foreign-key on-delete-cascade
+	selectedoutfit.itemid int not-null foreign-key on-delete-cascade
+	creationdate date current-date not-null

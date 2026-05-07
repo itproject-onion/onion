@@ -4,39 +4,113 @@ namespace App\Http\Controllers;
 use App\Services\WeatherService;
 use App\Services\RecommendationService;
 use App\Services\GeocodingService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\Item;
+use App\Models\Category;
+use App\Models\Tag;
 
 class RecommendationController extends Controller
 {
-    public function index(WeatherService $weatherService, RecommendationService $recService, GeocodingService $GeocodingService)
+    public function index(WeatherService $weatherService, RecommendationService $recService, GeocodingService $GeocodingService, Request $request)
     {
-        $latitude = 48.2;
-        $longitude = 16.37;
+        if ($request->filled('latitude') && $request->filled('longitude')) {
+            $latitude = $request->latitude;
+            $longitude = $request->longitude;
+        } else {
+            $latitude = 48.2;
+            $longitude = 16.37;
+        }
 
         $location = $GeocodingService->reverse($latitude, $longitude);
         if (!$location) {
             return response()->json(['error' => 'Standort konnte nicht bestimmt werden'], 500);
         }
-
         $weather = $weatherService->getWeather($latitude, $longitude);
         if (!$weather) {
             return response()->json(['error' => 'Keine Wetterdaten'], 500);
         }
-
         $currentTime = $this->getCurrentHourIndex($weather['time']);
         if ($currentTime === -1) {
             return response()->json(['error' => 'Zeit nicht gefunden'], 500);
         }
 
-        $kleidungsstuecke = []; // später aus DB
+        /* Sollte theoretisch sowas liefern
+        [
+            {
+                "id": 1,
+                "name": "Winterjacke",
+                "filepath": "/img/jacket.jpg",
+                "is_waterproof": true,
+                "cloudcoverthreshold": null,
+                "maxuv": null,
+                "maxtemp": 10,
+                "mintemp": -5,
+
+                "category": {
+                "id": 2,
+                "categoryname": "Jacken",
+                "impactedbyrain": true
+                },
+
+                "tags": [
+                { "id": 1, "name": "warm" },
+                { "id": 2, "name": "winter" }
+                ]
+            }
+        ]
+        */
+        if (Auth::guest()) {
+            $kleidungsstuecke = Item::with(['category', 'tags'])
+                ->WhereNull('user_id')
+                ->get();
+            $tags = Tag::whereNull('user_id')->get();
+        } else {
+            $kleidungsstuecke = Item::with(['category', 'tags'])
+                ->where('user_id', Auth::id())
+                ->get();
+            $tags = Tag::where(function ($query) {
+                $query
+                    ->where('user_id', Auth::id())
+                    ->orWhereNull('user_id');
+                })
+                ->get();
+        }
         $recommendations = [];
         foreach ($kleidungsstuecke as $item) {
             if ($recService->isRecommended($item, $currentTime, $weather)) {
                 $recommendations[] = $item;
             }
         }
+        $recommendationsForFrontend = $this->fromatForFrontend($recommendations);
+        /* Sollte sowas liefern
+        {
+            "upper_jacke": [
+                {
+                "id": 10,
+                "img": "/storage/jacke1.png",
+                "name": "Supa Jacke",
+                "waterproof": true,
 
-        $tags = []; // später aus DB alle tags des users holen
-        $categories = []; // später aus DB alle kategorien holen
+                "tags": [
+                    { "id": 3, "name": "rain" },
+                    { "id": 5, "name": "wind" }
+                ],
+
+                "cloudcoverthreshold": 60,
+                "maxuv": null,
+                "minuv": null,
+                "maxtemp": 18,
+                "mintemp": 5,
+
+                "creationdate": "2026-05-05"
+                }
+            ]
+        }
+        */
+        $categories = Category::all();
+
+
 
         //ZUM TESTEN
         $categories = ['head', 'upper', 'lower', 'feet']; 
@@ -167,7 +241,7 @@ class RecommendationController extends Controller
         ];
 
         return view('home', [
-            'recommendations' => $recommendations,
+            'recommendations' => /*$recommendationsForFrontend NACH DEN TESTS AUF DAS ÄNDERN*/$recommendations,
             'tags' => $tags,
             'categories' => $categories,
             'weather' => $weather,
@@ -188,4 +262,71 @@ class RecommendationController extends Controller
 
         return -1;
     }
+
+    private function fromatForFrontend($recommendations) {
+        $categoryMap = [
+            'Kopfbedeckung'   => 'head',
+
+            'T-Shirt'         => 'upper_shirt',
+            'Pullover'        => 'upper_pulli',
+            'Jacke'           => 'upper_jacke',
+
+            'Hose'            => 'lower_pants',
+            'Strumpfhose'     => 'lower_tights',
+
+            'Socken'          => 'feet_socks',
+            'Schuhe'          => 'feet_shoes',
+
+            'Handausstattung' => 'hand',
+            'Sonnenbrille'    => 'sunglasses',
+            'Sonnencreme'     => 'sunscreen',
+        ];
+
+        $result = [
+            'head' => [],
+
+            'upper_shirt' => [],
+            'upper_pulli' => [],
+            'upper_jacke' => [],
+
+            'lower_pants' => [],
+            'lower_tights' => [],
+
+            'feet_socks' => [],
+            'feet_shoes' => [],
+
+            'hand' => [],
+            'sunglasses' => [],
+            'sunscreen' => [],
+        ];
+
+        foreach ($recommendations as $item) {
+            if (!$item->category) continue;
+
+            $key = $categoryMap[$item->category->categoryname] ?? null;
+            if (!$key) continue;
+
+            $result[$key][] = [
+                'id' => $item->id,
+                'img' => $item->filepath,
+                'name' => $item->itemname,
+                'waterproof' => $item->waterproof,
+                'cloudcoverthreshold' => $item->cloudcoverthreshold,
+                'maxuv' => $item->maxuv,
+                'minuv' => $item->minuv,
+                'maxtemp' => $item->maxtemp,
+                'mintemp' => $item->mintemp,
+                'creationdate' => $item->creationdate,
+                // TAGS (id + name)
+                'tags' => $item->tags->map(function ($tag) {
+                    return [
+                        'id' => $tag->id,
+                        'name' => $tag->name,
+                    ];
+                })->toArray(),
+            ];
+        }
+        return $result;
+    }
+
 }

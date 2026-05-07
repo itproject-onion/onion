@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use Illuminate\Support\Facades\Auth;
+
 class RecommendationService
 {
     private $config = [
@@ -10,9 +12,11 @@ class RecommendationService
     ];
 
     public function isRecommended($kleidungsstueck, $currentTime, $weather) {
-        global $config;
+        $config = $this->config;
 
-        if (in_array("Impacted by rain", $kleidungsstueck['tags'])) {
+        if($kleidungsstueck->category === null) return false;
+
+        if ($kleidungsstueck->category->impactedbyrain && $kleidungsstueck->is_waterproof !== null) {
             $rainSoon = false;
 
             for ($i = $currentTime; $i < $currentTime + 10; ++$i) {
@@ -23,23 +27,23 @@ class RecommendationService
             }
 
             if ($rainSoon) {
-                if (!empty($kleidungsstueck['wasserfest'])) {
-                    return checkTemperatureRange($kleidungsstueck, $currentTime, $weather['apparentTemperature']);
+                if ($kleidungsstueck->is_waterproof === true) {
+                    return $this->checkTemperatureRange($kleidungsstueck, $currentTime, $weather['apparentTemperature']);
                 }
                 return false;
             }
 
-            return checkTemperatureRange($kleidungsstueck, $currentTime, $weather['apparentTemperature']);
+            return $this->checkTemperatureRange($kleidungsstueck, $currentTime, $weather['apparentTemperature']);
         }
 
-        if ($kleidungsstueck['kategorie'] === 'sonnenbrille') {
+        if ($kleidungsstueck->category->categoryname === 'Sonnenbrille') {
             $goodHours = 0;
 
             for ($i = $currentTime; $i < $currentTime + 10; ++$i) {
                 if (
                     isset($weather['isDay'][$i], $weather['cloudCover'][$i]) &&
                     $weather['isDay'][$i] == 1 &&
-                    $kleidungsstueck['cloudCoverThreshold'] > $weather['cloudCover'][$i]
+                    $kleidungsstueck->cloudcoverthreshold > $weather['cloudCover'][$i]
                 ) {
                     $goodHours++;
                 }
@@ -48,7 +52,7 @@ class RecommendationService
             return $goodHours >= $config['sunglassesMinHours'];
         }
 
-        if ($kleidungsstueck['kategorie'] === 'sonnencreme') {
+        if ($kleidungsstueck->category->categoryname === 'Sonnencreme') {
             $uvValues = [];
 
             for ($i = $currentTime; $i < $currentTime + 10; ++$i) {
@@ -63,23 +67,29 @@ class RecommendationService
 
             $peakUV = max($uvValues);
 
-            return $kleidungsstueck['minUVIndex'] <= $peakUV &&
-                $kleidungsstueck['maxUVIndex'] >= $peakUV;
+            return
+                $kleidungsstueck->minuv <= $peakUV &&
+                $kleidungsstueck->maxuv >= $peakUV;
         }
 
-        return checkTemperatureRange($kleidungsstueck, $currentTime, $weather['apparentTemperature']);
+        return $this->checkTemperatureRange($kleidungsstueck, $currentTime, $weather['apparentTemperature']);
     }
 
     private function checkTemperatureRange($kleidungsstueck, $currentTime, $apparentTemperature) {
-        global $config;
+        $config = $this->config;
+        if (Auth::guest()) {
+            $userTempOffset = 0;
+        } else {
+            $userTempOffset = auth()->user()->temperature_offset;
+        }
 
         $fallsInRange = 0;
 
         for ($i = $currentTime; $i < $currentTime + 10; ++$i) {
             if (
                 isset($apparentTemperature[$i]) &&
-                $kleidungsstueck['minTemp'] <= $apparentTemperature[$i] &&
-                $kleidungsstueck['maxTemp'] >= $apparentTemperature[$i]
+                ($kleidungsstueck->mintemp + $userTempOffset) <= $apparentTemperature[$i] &&
+                ($kleidungsstueck->maxtemp + $userTempOffset) >= $apparentTemperature[$i]
             ) {
                 $fallsInRange++;
             }
