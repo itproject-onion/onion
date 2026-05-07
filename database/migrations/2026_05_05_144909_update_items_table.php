@@ -18,9 +18,6 @@ return new class extends Migration
             $table->integer('max_uv_index')->nullable();
             $table->unsignedInteger('cloud_cover_threshold')->nullable();
 
-            $table->integer('min_temperature_offset')->default(0);
-            $table->integer('max_temperature_offset')->default(0);
-
             $table->boolean('is_waterproof')->nullable()->change();
         });
 
@@ -37,9 +34,6 @@ return new class extends Migration
             $table->dropColumn('min_uv_index');
             $table->dropColumn('max_uv_index');
             $table->dropColumn('cloud_cover_threshold');
-
-            $table->dropColumn('min_temperature_offset');
-            $table->dropColumn('max_temperature_offset');
         });
     }
 };

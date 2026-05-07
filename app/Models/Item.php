@@ -15,8 +15,6 @@ class Item extends Model
         'min_uv_index',
         'max_uv_index',
         'cloud_cover_threshold',
-        'min_temperature_offset',
-        'max_temperature_offset',
 
         'category_id',
         'user_id',
