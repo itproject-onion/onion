@@ -317,3 +317,55 @@ leider noch nicht ganz wie ich mir das vorstelle... ich bin dran!*/
     color: #333 !important; 
 }
 
+.city-search {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 10px;
+    max-width: 360px;
+}
+
+.city-search input {
+    width: 190px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 18px;
+    font-size: 16px;
+    background-color: white;
+}
+
+.weather-button {
+    background-color: #d6a871;
+    border: none;
+    border-radius: 22px;
+    padding: 10px 24px;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.location-link {
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: #444;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.display-temp {
+    margin-top: 22px;
+}
+
+.condition {
+    margin-top: -8px;
+    font-size: 18px;
+}
+
+.city-error {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #7a2e2e;
+}
