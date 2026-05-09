@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -67,14 +68,24 @@ class User extends Authenticatable
         ];
     }
 
-    // Relationships
-    public function categories()
+    /**
+     * Returns collection of items that represent the outfit for the given date and user
+     * if no date is given, the current date is used
+     */
+    public function getOutfitForDate(?Carbon $date = null)
     {
-        return $this->belongsToMany(Category::class)
-            ->as('offsets')
-            ->withPivot('min_temperature_offset', 'max_temperature_offset');
+        if ($date === null) {
+            $date = Carbon::now();
+        }
+
+        return $this->selectedOutfits()
+            ->whereDate('created_at', $date->toDateString())
+            ->with('item')
+            ->get()
+            ->pluck('item');
     }
 
+    // Relationships
     public function items()
     {
         return $this->hasMany(Item::class);
@@ -83,5 +94,10 @@ class User extends Authenticatable
     public function tags()
     {
         return $this->hasMany(Tag::class);
+    }
+
+    public function selectedOutfits()
+    {
+        return $this->hasMany(SelectedOutfit::class);
     }
 }
