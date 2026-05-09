@@ -1,9 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use App\Http\Controllers\onion;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\TagController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/onion', [RecommendationController::class, 'index']);
 
@@ -21,12 +23,12 @@ Route::middleware([
 
 Route::resource('items', ItemController::class);
 Route::resource('categories', CategoryController::class);
-Route::resource('tags', TagController::class);
+Route::resource('tags', TagController::class)->except(['show'])->middleware('auth');
 
 Route::post('/save-outfit', function (Request $request) {
     return response()->json([
         'message' => 'Outfit-IDs empfangen!',
-        'daten' => $request->all()
+        'daten' => $request->all(),
     ]);
 })->name('outfit.save');
 
