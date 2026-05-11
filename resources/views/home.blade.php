@@ -104,19 +104,64 @@
 
     <!--wetter blcok ist grad einfach nur platzhalter den müsstet ihr bitte noch dynamsich befüllen (je nach dem wie du die sachen in der db dann final benennst...-->
     <aside class="side-area info">
-        <div class="weather-desktop">
-            <div class="weather-city"><i class="bi bi-geo-alt-fill"></i>{{ $location }}</div>
-            <h2 class="display-temp">{{ $weather['apparentTemperature'][$current_time] }}</h2>
-            <p class="condition">windig ANPASSEN</p>
-            <div class="weather-icons">
-                <i class="bi bi-sun-fill main-sun">ANPASSEN</i>
-                <i class="bi bi-cloud-fill overlap-cloud">ANPASSEN</i>
-            </div>
-            <div class="recommendation-box">
-                <p>hier ist theoretisch noch platz für einen kleinen infotext zum wetter oder so idk</p>
-            </div>
+    <div class="weather-desktop">
+
+        <div class="weather-city">
+            <i class="bi bi-geo-alt-fill"></i>
+
+            <span id="locationText">
+                {{ $location }}
+            </span>
         </div>
-    </aside>
+
+    <div class="city-search">
+
+    <input
+        type="text"
+        id="cityInput"
+        placeholder="Ort eingeben"
+    >
+
+    <button
+        class="weather-button"
+        onclick="getWeatherByCity()"
+    >
+        Ändern
+    </button>
+
+    </div>
+    <p id="cityError" class="city-error"></p>
+
+    <button
+        class="location-link"
+            onclick="getLocation()"
+        >
+        <i class="bi bi-crosshair"></i>
+        Aktuellen Standort nutzen
+    </button>
+
+    <h2 class="display-temp" id="temperatureText">
+     {{ $weather['apparentTemperature'][$current_time] }}°
+    </h2>
+
+        <p class="condition" id="weatherInfoText">
+            windig ANPASSEN
+        </p>
+
+        <div class="weather-icons">
+            <i class="bi bi-sun-fill main-sun">ANPASSEN</i>
+            <i class="bi bi-cloud-fill overlap-cloud">ANPASSEN</i>
+        </div>
+
+        <div class="recommendation-box">
+            <p>
+                hier ist theoretisch noch platz für einen kleinen infotext
+                zum wetter oder so idk
+            </p>
+        </div>
+
+    </div>
+</aside>
 
     //tags ZUM TESTEN
     <div class="grid" id="tags">
@@ -140,5 +185,109 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 @vite(['resources/js/modal.js'])
+
+<!--Geolocation: geht nur mit herd secure vorher lokal aktivieren da https benötigt wird--> 
+
+
+<script>
+
+function getLocation() {
+
+    if (navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition(success, error);
+
+    } else {
+
+        alert("Geolocation wird nicht unterstützt.");
+
+    }
+}
+
+function success(position) {
+
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    fetch(`/weather/location?lat=${lat}&lon=${lon}`)
+        .then(response => response.json())
+        .then(data => {
+
+            document.getElementById("locationText").innerHTML =
+                data.city;
+
+            document.getElementById("temperatureText").innerHTML =
+                data.weather.apparentTemperature[0] + "°";
+
+        });
+
+}
+
+function error(error) {
+
+    if (error.code === 1) {
+
+        document.getElementById("weatherInfoText").innerHTML =
+            "Standortzugriff wurde abgelehnt. Bitte Ort manuell eingeben.";
+
+    } else if (error.code === 2) {
+
+        document.getElementById("weatherInfoText").innerHTML =
+            "Standort konnte nicht ermittelt werden.";
+
+    } else if (error.code === 3) {
+
+        document.getElementById("weatherInfoText").innerHTML =
+            "Zeitüberschreitung beim Standortabruf.";
+
+    } else {
+
+        document.getElementById("weatherInfoText").innerHTML =
+            "Unbekannter Standortfehler.";
+
+    }
+}
+
+
+getLocation();
+
+</script>
+
+<script>
+async function getWeatherByCity() {
+
+    const city = document.getElementById("cityInput").value;
+
+    if (!city) {
+        return;
+    }
+
+    const response = await fetch(
+        `/weather/city?city=${encodeURIComponent(city)}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+
+    document.getElementById("cityError").innerHTML =
+        data.error;
+
+    return;
+}
+
+
+document.getElementById("cityError").innerHTML = "";
+
+    document.getElementById("locationText").innerHTML =
+        data.city;
+
+    document.getElementById("temperatureText").innerHTML =
+        data.weather.apparentTemperature[0] + "°";
+
+
+}
+</script>
+
 </body>
 </html>
