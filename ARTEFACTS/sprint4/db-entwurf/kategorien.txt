@@ -9,6 +9,6 @@ Hose
 Strumpfhose
 Socken
 Schuhe
-Handausstattung (z.B. Fächer, Handschuhe, etc...)
+Accessoires (z.B. Fächer, Handschuhe, etc...)
 Sonnenbrille (Vorschlag Default item: cloudcoverthreshold 60%)
 Sonnencreme (Vorschlag Default items: uvindex 3-5: lsf 30, uvindex 5+: lsf 50)
