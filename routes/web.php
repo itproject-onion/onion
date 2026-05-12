@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use App\Http\Controllers\onion;
 use App\Http\Controllers\RecommendationController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/onion', [RecommendationController::class, 'index']);
 
@@ -26,7 +25,7 @@ Route::resource('tags', TagController::class);
 Route::post('/save-outfit', function (Request $request) {
     return response()->json([
         'message' => 'Outfit-IDs empfangen!',
-        'daten' => $request->all()
+        'daten' => $request->all(),
     ]);
 })->name('outfit.save');
 
