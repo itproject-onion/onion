@@ -1,12 +1,20 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WeatherController;
 
 Route::get('/onion', [RecommendationController::class, 'index']);
 
 Route::get('/', [RecommendationController::class, 'index']);
+
+Route::get('/weather/city', [WeatherController::class, 'weatherByCity']);
+
+Route::get('/weather/location', [WeatherController::class, 'weatherByLocation']);
 
 Route::middleware([
     'auth:sanctum',
@@ -20,7 +28,7 @@ Route::middleware([
 
 Route::resource('items', ItemController::class);
 Route::resource('categories', CategoryController::class);
-Route::resource('tags', TagController::class);
+Route::resource('tags', TagController::class)->except(['show'])->middleware('auth');
 
 Route::post('/save-outfit', function (Request $request) {
     return response()->json([

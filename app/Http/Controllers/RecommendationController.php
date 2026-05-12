@@ -303,20 +303,20 @@ class RecommendationController extends Controller
         foreach ($recommendations as $item) {
             if (!$item->category) continue;
 
-            $key = $categoryMap[$item->category->categoryname] ?? null;
+            $key = $categoryMap[$item->category->name] ?? null;
             if (!$key) continue;
 
             $result[$key][] = [
                 'id' => $item->id,
                 'img' => $item->filepath,
-                'name' => $item->itemname,
-                'waterproof' => $item->waterproof,
-                'cloudcoverthreshold' => $item->cloudcoverthreshold,
-                'maxuv' => $item->maxuv,
-                'minuv' => $item->minuv,
-                'maxtemp' => $item->maxtemp,
-                'mintemp' => $item->mintemp,
-                'creationdate' => $item->creationdate,
+                'name' => $item->name,
+                'waterproof' => $item->is_waterproof,
+                'cloudcoverthreshold' => $item->cloud_cover_threshold,
+                'maxuv' => $item->max_uv_index,
+                'minuv' => $item->min_uv_index,
+                'maxtemp' => $item->max_temperature,
+                'mintemp' => $item->min_temperature,
+                'creationdate' => $item->created_at,
                 // TAGS (id + name)
                 'tags' => $item->tags->map(function ($tag) {
                     return [

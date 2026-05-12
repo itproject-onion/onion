@@ -21,4 +21,21 @@ class GeocodingService
 
         return $response->json();
     }
+
+    public function searchCity($city)
+{
+    $response = Http::withHeaders([
+        'User-Agent' => 'OnionApp/1.0'
+    ])->get('https://nominatim.openstreetmap.org/search', [
+        'q' => $city,
+        'format' => 'json',
+        'limit' => 1,
+    ]);
+
+    if ($response->failed()) {
+        return null;
+    }
+
+    return $response->json();
+}
 }

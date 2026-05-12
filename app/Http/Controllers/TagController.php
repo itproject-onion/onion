@@ -12,7 +12,9 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $tags = Tag::where('user_id', auth()->id())->get();
+
+        return view('tags.index', compact('tags'));
     }
 
     /**
@@ -20,7 +22,7 @@ class TagController extends Controller
      */
     public function create()
     {
-        //
+        return view('tags.create');
     }
 
     /**
@@ -28,15 +30,24 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'name' => 'required|string',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Tag $tag)
-    {
-        //
+        try {
+            Tag::create([
+                'name' => $request->name,
+                'user_id' => $request->user()->id,
+            ]);
+
+            $status = 'success';
+            $message = 'Der Tag wurde erfolgreich gespeichert.';
+        } catch (Exception $e) {
+            $status = 'error';
+            $message = 'Beim Speichern des Tags ist ein Fehler aufgetreten.';
+        }
+
+        return redirect()->route('tags.index')->with($status, $message);
     }
 
     /**
@@ -44,7 +55,7 @@ class TagController extends Controller
      */
     public function edit(Tag $tag)
     {
-        //
+        return view('tags.edit', compact('tag'));
     }
 
     /**
@@ -52,7 +63,23 @@ class TagController extends Controller
      */
     public function update(Request $request, Tag $tag)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+        ]);
+
+        try {
+            $tag->update([
+                'name' => $request->name,
+            ]);
+
+            $status = 'success';
+            $message = 'Die Änderungen wurden erfolgreich gespeichert.';
+        } catch (Exception $e) {
+            $status = 'error';
+            $message = 'Beim Speichern der Änderungen ist ein Fehler aufgetreten.';
+        }
+
+        return redirect()->route('tags.index')->with($status, $message);
     }
 
     /**
@@ -60,6 +87,15 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        try {
+            $tag->delete();
+            $status = 'success';
+            $message = 'Der Tag wurde erfolgreich gelöscht.';
+        } catch (Exception $e) {
+            $status = 'error';
+            $message = 'Beim Löschen des Tags ist ein Fehler aufgetreten.';
+        }
+
+        return redirect()->route('tags.index')->with($status, $message);
     }
 }

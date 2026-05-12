@@ -16,7 +16,7 @@ class RecommendationService
 
         if($kleidungsstueck->category === null) return false;
 
-        if ($kleidungsstueck->category->impactedbyrain && $kleidungsstueck->is_waterproof !== null) {
+        if ($kleidungsstueck->category->is_impacted_by_rain && $kleidungsstueck->is_waterproof !== null) {
             $rainSoon = false;
 
             for ($i = $currentTime; $i < $currentTime + 10; ++$i) {
@@ -36,14 +36,14 @@ class RecommendationService
             return $this->checkTemperatureRange($kleidungsstueck, $currentTime, $weather['apparentTemperature']);
         }
 
-        if ($kleidungsstueck->category->categoryname === 'Sonnenbrille') {
+        if ($kleidungsstueck->category->name === 'Sonnenbrille') {
             $goodHours = 0;
 
             for ($i = $currentTime; $i < $currentTime + 10; ++$i) {
                 if (
                     isset($weather['isDay'][$i], $weather['cloudCover'][$i]) &&
                     $weather['isDay'][$i] == 1 &&
-                    $kleidungsstueck->cloudcoverthreshold > $weather['cloudCover'][$i]
+                    $kleidungsstueck->cloud_cover_threshold > $weather['cloudCover'][$i]
                 ) {
                     $goodHours++;
                 }
@@ -52,7 +52,7 @@ class RecommendationService
             return $goodHours >= $config['sunglassesMinHours'];
         }
 
-        if ($kleidungsstueck->category->categoryname === 'Sonnencreme') {
+        if ($kleidungsstueck->category->name === 'Sonnencreme') {
             $uvValues = [];
 
             for ($i = $currentTime; $i < $currentTime + 10; ++$i) {
@@ -68,8 +68,8 @@ class RecommendationService
             $peakUV = max($uvValues);
 
             return
-                $kleidungsstueck->minuv <= $peakUV &&
-                $kleidungsstueck->maxuv >= $peakUV;
+                $kleidungsstueck->min_uv_index <= $peakUV &&
+                $kleidungsstueck->max_uv_index >= $peakUV;
         }
 
         return $this->checkTemperatureRange($kleidungsstueck, $currentTime, $weather['apparentTemperature']);
@@ -88,8 +88,8 @@ class RecommendationService
         for ($i = $currentTime; $i < $currentTime + 10; ++$i) {
             if (
                 isset($apparentTemperature[$i]) &&
-                ($kleidungsstueck->mintemp + $userTempOffset) <= $apparentTemperature[$i] &&
-                ($kleidungsstueck->maxtemp + $userTempOffset) >= $apparentTemperature[$i]
+                ($kleidungsstueck->min_temperature + $userTempOffset) <= $apparentTemperature[$i] &&
+                ($kleidungsstueck->max_temperature + $userTempOffset) >= $apparentTemperature[$i]
             ) {
                 $fallsInRange++;
             }
