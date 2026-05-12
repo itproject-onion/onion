@@ -6,10 +6,15 @@ use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WeatherController;
 
 Route::get('/onion', [RecommendationController::class, 'index']);
 
 Route::get('/', [RecommendationController::class, 'index']);
+
+Route::get('/weather/city', [WeatherController::class, 'weatherByCity']);
+
+Route::get('/weather/location', [WeatherController::class, 'weatherByLocation']);
 
 Route::middleware([
     'auth:sanctum',
