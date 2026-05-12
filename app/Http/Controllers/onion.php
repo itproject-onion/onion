@@ -9,7 +9,8 @@ class onion extends Controller
     // GET-Request
     public function show()
     {
-        $message = "Hallo von PHP!";
+        $message = 'Hallo von PHP!';
+
         return view('onion', ['message' => $message]);
     }
 }
