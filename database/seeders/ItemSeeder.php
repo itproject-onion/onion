@@ -15,7 +15,7 @@ class ItemSeeder extends Seeder
         $items = [
             [
                 'name' => 'Sonnenhut',
-                'filepath' => 'public/head1_cosi.png',
+                'filepath' => '/storage/head1_cosi.png',
                 'is_waterproof' => false,
                 'min_temperature' => 20,
                 'max_temperature' => 35,
@@ -26,7 +26,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Regenjacke',
-                'filepath' => 'public/jacke1_cosi.png',
+                'filepath' => '/storage/jacke1_cosi.png',
                 'is_waterproof' => true,
                 'min_temperature' => 0,
                 'max_temperature' => 15,
@@ -37,7 +37,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Pullover',
-                'filepath' => 'public/pulli3_cosi.png',
+                'filepath' => '/storage/pulli3_cosi.png',
                 'is_waterproof' => null,
                 'min_temperature' => 0,
                 'max_temperature' => 15,
@@ -48,7 +48,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'T-Shirt',
-                'filepath' => 'public/shirt1_cosi.png',
+                'filepath' => '/storage/shirt1_cosi.png',
                 'is_waterproof' => null,
                 'min_temperature' => 15,
                 'max_temperature' => 35,
@@ -59,7 +59,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Jeans',
-                'filepath' => 'public/lower2_cosi.png',
+                'filepath' => '/storage/lower2_cosi.png',
                 'is_waterproof' => null,
                 'min_temperature' => 10,
                 'max_temperature' => 25,
@@ -70,7 +70,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Strumpfhose',
-                'filepath' => 'public/placeholder.png',
+                'filepath' => '/storage/placeholder.png',
                 'is_waterproof' => null,
                 'min_temperature' => 15,
                 'max_temperature' => 25,
@@ -81,7 +81,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Socken',
-                'filepath' => 'public/placeholder.png',
+                'filepath' => '/storage/placeholder.png',
                 'is_waterproof' => null,
                 'min_temperature' => 0,
                 'max_temperature' => 25,
@@ -92,7 +92,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Schuhe',
-                'filepath' => 'public/feet1_cosi.png',
+                'filepath' => '/storage/feet1_cosi.png',
                 'is_waterproof' => false,
                 'min_temperature' => 15,
                 'max_temperature' => 25,
@@ -103,7 +103,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Handschuhe',
-                'filepath' => 'public/placeholder.png',
+                'filepath' => '/storage/placeholder.png',
                 'is_waterproof' => true,
                 'min_temperature' => -10,
                 'max_temperature' => 10,
@@ -114,7 +114,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Sonnenbrille',
-                'filepath' => 'public/placeholder.png',
+                'filepath' => '/storage/placeholder.png',
                 'is_waterproof' => null,
                 'min_temperature' => null,
                 'max_temperature' => null,
@@ -125,7 +125,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Sonnencreme LSF 30',
-                'filepath' => 'public/placeholder.png',
+                'filepath' => '/storage/placeholder.png',
                 'is_waterproof' => true,
                 'min_temperature' => null,
                 'max_temperature' => null,
@@ -136,7 +136,7 @@ class ItemSeeder extends Seeder
             ],
             [
                 'name' => 'Sonnencreme LSF 50',
-                'filepath' => 'public/placeholder.png',
+                'filepath' => '/storage/placeholder.png',
                 'is_waterproof' => true,
                 'min_temperature' => null,
                 'max_temperature' => null,

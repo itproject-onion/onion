@@ -9,11 +9,22 @@ use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Models\SelectedOutfit;
 
 class RecommendationController extends Controller
 {
     public function index(WeatherService $weatherService, RecommendationService $recService, GeocodingService $GeocodingService, Request $request)
     {
+        $hasPendingOutfitToday = SelectedOutfit::where('user_id', auth()->id())
+            ->where('has_been_reviewed', false)
+            ->whereDate('created_at', today())
+            ->exists();
+        if ($hasPendingOutfitToday) {
+            return redirect()->route('outfit.review', [
+                'date' => now()->toDateString()
+            ]);
+        }
+
         if ($request->filled('latitude') && $request->filled('longitude')) {
             $latitude = $request->latitude;
             $longitude = $request->longitude;
@@ -82,7 +93,7 @@ class RecommendationController extends Controller
                 $recommendations[] = $item;
             }
         }
-        $recommendationsForFrontend = $this->fromatForFrontend($recommendations);
+        $recommendationsForFrontend = $this->formatForFrontend($recommendations);
         /* Sollte sowas liefern
         {
             "upper_jacke": [
@@ -108,12 +119,18 @@ class RecommendationController extends Controller
             ]
         }
         */
-        $categories = Category::all();
+        $categoryMap = Category::all() //Wenn kein gemapptes array gebraucht wird, ab hier löschen
+            ->map(function ($category) {
+                return $this->mapCategoryName($category->name);
+            })
+            ->filter()   // entfernt nulls
+            ->values()   // reindexiert 0..n
+            ->toArray();
 
 
 
         //ZUM TESTEN
-        $categories = ['head', 'upper', 'lower', 'feet']; 
+        //$categories = ['head', 'upper', 'lower', 'feet']; 
         $tags = [
             'sun',
             'rain',
@@ -125,7 +142,7 @@ class RecommendationController extends Controller
             'casual',
             'wind'
         ];
-        $recommendations = [
+        /*$testRec = [
             'head' => [
                 [
                     'id' => 1,
@@ -238,12 +255,12 @@ class RecommendationController extends Controller
                     'tags' => ['casual', 'summer']
                 ],
             ],
-        ];
+        ];*/
 
         return view('home', [
-            'recommendations' => /*$recommendationsForFrontend NACH DEN TESTS AUF DAS ÄNDERN*/$recommendations,
+            'recommendations' => $recommendationsForFrontend/* NACH DEN TESTS AUF DAS ÄNDERN$recommendations*/,
             'tags' => $tags,
-            'categories' => $categories,
+            'categories' => $categoryMap,
             'weather' => $weather,
             'current_time' => $currentTime,
             'location' => $location['display_name']
@@ -263,7 +280,7 @@ class RecommendationController extends Controller
         return -1;
     }
 
-    private function fromatForFrontend($recommendations) {
+    private function formatForFrontend($recommendations) {
         $categoryMap = [
             'Kopfbedeckung'   => 'head',
 
@@ -277,7 +294,7 @@ class RecommendationController extends Controller
             'Socken'          => 'feet_socks',
             'Schuhe'          => 'feet_shoes',
 
-            'Handausstattung' => 'hand',
+            'Accessoires'     => 'hand',
             'Sonnenbrille'    => 'sunglasses',
             'Sonnencreme'     => 'sunscreen',
         ];
@@ -327,6 +344,29 @@ class RecommendationController extends Controller
             ];
         }
         return $result;
+    }
+
+    private function mapCategoryName(string $name): ?string
+    {
+        return match ($name) {
+            'Kopfbedeckung' => 'head',
+
+            'T-Shirt' => 'upper_shirt',
+            'Pullover' => 'upper_pulli',
+            'Jacke' => 'upper_jacke',
+
+            'Hose' => 'lower_pants',
+            'Strumpfhose' => 'lower_tights',
+
+            'Socken' => 'feet_socks',
+            'Schuhe' => 'feet_shoes',
+
+            'Accessoires' => 'hand',
+            'Sonnenbrille' => 'sunglasses',
+            'Sonnencreme' => 'sunscreen',
+
+            default => null,
+        };
     }
 
 }

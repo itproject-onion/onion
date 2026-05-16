@@ -3,17 +3,17 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WeatherController;
 
 Route::get('/onion', [RecommendationController::class, 'index']);
-
-Route::get('/', [RecommendationController::class, 'index']);
+Route::get('/', [RecommendationController::class, 'index'])->name('onion.home');
 
 Route::get('/weather/city', [WeatherController::class, 'weatherByCity']);
-
 Route::get('/weather/location', [WeatherController::class, 'weatherByLocation']);
 
 Route::middleware([
@@ -26,21 +26,22 @@ Route::middleware([
     })->name('dashboard');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index']);
+    Route::get('/review', [ReviewController::class, 'index'])->name('outfit.review');
+
+    Route::post('/save-outfit', function (Request $request) {
+        return response()->json([
+            'message' => 'Outfit-IDs empfangen!',
+            'daten' => $request->all(),
+        ]);
+    })->name('outfit.save');
+
+    Route::get('/settings', function () {
+        return view('settings');
+    })->name('settings');
+});
+
 Route::resource('items', ItemController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('tags', TagController::class)->except(['show'])->middleware('auth');
-
-Route::post('/save-outfit', function (Request $request) {
-    return response()->json([
-        'message' => 'Outfit-IDs empfangen!',
-        'daten' => $request->all(),
-    ]);
-})->name('outfit.save');
-
-Route::get('/profile', function () {
-    return view('profile');
-})->name('profile');
-
-Route::get('/settings', function () {
-    return view('settings');
-})->middleware(['auth'])->name('settings');
